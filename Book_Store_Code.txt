@@ -1,0 +1,271 @@
+//                           Book_Store_Code
+//                               v1.0.3
+
+
+
+#include<iostream.h>
+#include<conio.h>
+#include<fstream.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<string.h>
+
+class Book{
+
+	int price,rating,stock;
+	char bid[10],bname[40],author[20],publisher[20];
+    public:
+
+void getbook()
+{
+    cout<<"\nEnter details for Book:\n";
+    gets(bid);  gets(bname);  gets(author);  gets(publisher);
+    cin>>price;  cin>>rating;  cin>>stock;
+}
+
+void putbook()
+{
+    cout<<"\nDetails of Book are:\n";
+    puts(bid);  puts(bname);  puts(author);  puts(publisher);
+    cout<<price; cout<<rating;  cout<<stock;
+}
+
+char* getid()
+{
+      return bid;
+}
+
+char* getname()
+{
+      return bname;
+}
+
+	  }B;
+
+class Customer{
+
+	char cid[10],cname[40],addr[20],pass[20];
+	char* cart[10];
+
+    public:
+
+void getcust()
+{
+    cout<<"\nEnter details for Customer:\n";
+    gets(cid);  gets(cname);  gets(pass);  gets(addr);
+}
+
+void putcust()
+{
+    cout<<"\nDetails of Customer are:\n";
+    puts(cid);  puts(cname);  puts(addr);
+}
+
+char* getid()
+{
+      return cid;
+}
+
+char* getpass()
+{
+      return pass;
+}
+       }C;
+
+void addbook()
+{
+     ofstream fo("book.dat",ios::app);
+     B.getbook();
+     fo.write((char*)&B,sizeof(B));
+     cout<<"\nRecord Added to File...";
+     fo.close();
+}
+
+void showbooks()
+{
+     ifstream fi("book.dat",ios::out);
+     while(!fi.eof())
+       {
+	  fi.read((char*)&B,sizeof(B));
+	  B.putbook();
+       }
+     fi.close();
+}
+
+void signup()
+{
+     ofstream fo("customer.dat",ios::app);
+     C.getcust();
+     fo.write((char*)&C,sizeof(C));
+     cout<<"\nRecord Added to File...";
+     fo.close();
+}
+
+void showcustomers()
+{
+     ifstream fi("customer.dat",ios::out);
+     while(!fi.eof())
+       {
+	  fi.read((char*)&C,sizeof(C));
+	  C.putcust();
+       }
+     fi.close();
+}
+
+void deletebook()
+{
+      ifstream fi("book.dat",ios::in);
+      ofstream file("temp.dat",ios::out);
+      char id[10];
+      cout<<"\nEnter the Book ID to be deleted:\n";
+      gets(id);
+      while (!fi.eof())
+      {
+	 fi.read((char*)&B,sizeof(B));
+	 if(strcmp(id,B.getid())==0)
+	 {
+	      B.putbook();
+	 }
+	 else
+	      file.write((char*)&B,sizeof(B));
+      }
+      fi.close();
+      file.close();
+      remove("book.dat");
+      rename("btemp.dat","book.dat");
+}
+
+void searchbook()
+{
+      ifstream fi("book.dat",ios::in);
+      char nm[40];
+      cout<<"\nEnter the Name of the Book:\n";
+      gets(nm);
+      while (!fi.eof())
+      {
+	 fi.read((char*)&B,sizeof(B));
+	 if(strcmp(nm,B.getname())==0)
+	 {
+	      B.putbook();
+	 }
+      }
+      fi.close();
+}
+
+void deletecust()
+{
+      ifstream fi("customer.dat",ios::in);
+      ofstream file("temp.dat",ios::out);
+      char id[10];
+      cout<<"\nEnter the Customer ID to be deleted:\n";
+      gets(id);
+      while (!fi.eof())
+      {
+	 fi.read((char*)&C,sizeof(C));
+	 if(strcmp(id,C.getid())==0)
+	 {
+	      C.putcust();
+	 }
+	 else
+	      file.write((char*)&C,sizeof(C));
+      }
+      fi.close();
+      file.close();
+      remove("customer.dat");
+      rename("ctemp.dat","customer.dat");
+}
+
+void searchcust()
+{
+      ifstream fi("customer.dat",ios::in);
+      char id[10];
+      cout<<"\nEnter the Customer ID:\n";
+      gets(id);
+      while (!fi.eof())
+      {
+	 fi.read((char*)&C,sizeof(C));
+	 if(strcmp(id,C.getid())==0)
+	 {
+	      C.putcust();
+	 }
+      }
+      fi.close();
+}
+
+void login()
+ {
+
+     ifstream fi("customer.dat",ios::in);
+     char found='f';
+     char id[10],p[20];
+     cout<<"\nUsername: ";
+       gets(id);
+     while(!fi.eof())
+      {
+	fi.read((char*)&C,sizeof(C));
+	if(strcmp(C.getid(),id)==0)
+	 {
+	    found='t';
+	    cout<<"\nPassword: ";
+	      gets(p);
+	    if(strcmp(C.getpass(),p)==0)
+	      cout<<"\nYou are Logged-In Successfully...";
+	    else
+	      cout<<"\nWrong Password";
+	 }
+      }
+   if(found=='f')
+     cout<<"\nNo Username found";
+   fi.close();
+}
+
+void coder()
+{ 
+  char id[10],p[12];
+  cout<<"\nUsername: ";
+  gets(id);
+  if(strcmp("9876543210",id)==0)
+    {
+  cout<<"\nPassword: ";
+  gets(p);
+  if(strcmp("openthesafe",p)==0)
+    cout<<"\nYou are Logged-In Successfully...";
+  else
+    cout<<"\nWrong Password";
+    }
+}
+
+void main()
+{
+   clrscr();
+       cout<<"\n\t\t\tProgram has been initiated....\n";
+       fstream f1("book.dat",ios::in|ios::out|ios::binary|ios::app);
+       fstream f2("customer.dat",ios::in|ios::out|ios::binary|ios::app);
+      int ch;
+      cout<<"\n\n\t--*Main Menu*--\n";
+      cout<<"\n1. Sign-Up\n2. Log-In\n3. Exit\n";
+      cout<<"Enter your choice:";
+	 cin>>ch;
+      switch(ch)
+	{
+	    case 1:
+	       cout<<"\nSign-Up Page";
+	       signup();
+
+	    case 2:
+	       cout<<"\ndirecting to Log-In Page...";
+	       login();
+	    break;
+
+	    case 3:
+	       cout<<"\nThanks for Visiting";
+	       exit(1);
+	    break;
+
+	    case 1234:
+	       cout<<"\nWelcome Master";
+	       coder();
+	    break;
+	}
+   getch();
+}
